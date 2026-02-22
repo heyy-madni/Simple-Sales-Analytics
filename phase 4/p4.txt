@@ -1,0 +1,105 @@
+Phase 4: Real Analytics
+
+We don’t randomly write queries.
+
+We answer business questions.
+
+Step 1 — Validate Data (Do This First)
+
+Before any analytics, run:
+
+Count customers
+
+Count products
+
+Count orders
+
+If counts look wrong, stop.
+
+Garbage data → garbage analytics.
+
+Step 2 — Revenue Calculation (Foundation)
+
+Revenue per order = price × quantity
+
+But price is in products table.
+Quantity is in orders table.
+
+So you must:
+
+JOIN orders with products
+
+Create computed column
+
+This is your first test of relational thinking.
+
+If your join is wrong, revenue is wrong.
+
+Step 3 — Total Revenue
+
+Once revenue per order works:
+
+SUM(price × quantity)
+
+Now you understand:
+Row-level calculation → Aggregation
+
+That’s the core of analytics.
+
+Step 4 — Revenue Per Month
+
+Now you group by time.
+
+You will need:
+
+Extract month from order_date
+
+GROUP BY month
+
+SUM revenue
+
+This tests:
+
+Date handling
+
+Grouping logic
+
+If dates were generated poorly, you’ll feel it here.
+
+Step 5 — Top 5 Customers
+
+Join:
+orders → customers → products
+
+Group by customer.
+Order by SUM(revenue) DESC.
+Limit 5.
+
+This shows whether your dataset has meaningful distribution.
+
+If all customers look equal, your data generation was too uniform.
+
+Step 6 — Revenue by Category
+
+Group by product category.
+
+This tells you:
+Is one category dominating?
+
+Again, if results are flat, your data lacks structure.
+
+Important Concept: SQL Does the Math
+
+You do NOT:
+
+Fetch rows
+
+Loop in Python
+
+Multiply manually
+
+That’s inefficient and wrong approach.
+
+Database is built for aggregation.
+
+Python is for display.
