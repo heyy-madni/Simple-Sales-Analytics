@@ -124,6 +124,9 @@ def data_checker():
 p.id , p.name, p.category, p.price, o.id, o.customer_id, o.product_id, o.quantity, o.order_date
 """
 
+
+
+# metrics layer
 total_revenue=get_connection().execute("SELECT sum(p.price*o.quantity) FROM products p JOIN orders o ON p.product_id = o.product_id").fetchone()[0]
 total_orders=get_connection().execute("SELECT count(*) FROM orders").fetchone()[0]
 
@@ -134,6 +137,11 @@ def print_revenue_report():
         "average_order_value": total_revenue/total_orders if total_orders > 0 else 0,
         "total_units_sold": get_connection().execute("SELECT sum(quantity) FROM orders").fetchone()[0]
     }
+
+
+
+
+
 
 for key, value in print_revenue_report().items():
     print(f"{key}: {value}")
