@@ -3,7 +3,7 @@ import sqlite3 as sql
 from pathlib import Path
 from data_maker import  product_category_maker, order_date_maker, make_customer_class # type: ignore
 
-
+#note i change values to 0
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_BASE_DIR = BASE_DIR / "database"
 DATA_BASE_DIR.mkdir(parents=True, exist_ok=True)
@@ -50,7 +50,7 @@ def create_tables():
         """)
 
 
-def seed_customers(n=100):
+def seed_customers(n=0):
     with get_connection() as con:
         cur = con.cursor()
 
@@ -62,7 +62,7 @@ def seed_customers(n=100):
             )
 
 
-def seed_products(n=20):
+def seed_products(n=0):
     with get_connection() as con:
         cur = con.cursor()
 
@@ -76,7 +76,7 @@ def seed_products(n=20):
             )
 
 
-def seed_orders(n=500):
+def seed_orders(n=0):
     with get_connection() as con:
         cur = con.cursor()
 
@@ -115,21 +115,46 @@ def data_checker():
     }
 
 
-join_table_product_order=get_connection().execute("select * from products p \
-                            join orders o \
-                            on p.product_id=o.product_id").fetchall()
+# join_table_product_order=get_connection().execute("select * from products p \
+#                             join orders o \
+#                             on p.product_id=o.product_id").fetchall()
 
 #join looks like this:
 """
 p.id , p.name, p.category, p.price, o.id, o.customer_id, o.product_id, o.quantity, o.order_date
 """
 
+total_revenue=get_connection().execute("SELECT sum(p.price*o.quantity) FROM products p JOIN orders o ON p.product_id = o.product_id").fetchone()[0]
+total_orders=get_connection().execute("SELECT count(*) FROM orders").fetchone()[0]
 
-if __name__ == "__main__":
-    create_tables()
-    seed_customers()
-    seed_products()
-    seed_orders()
+def print_revenue_report():
+    return {
+        "total_revenue": total_revenue,
+        "total_orders": total_orders,
+        "average_order_value": total_revenue/total_orders if total_orders > 0 else 0,
+        "total_units_sold": get_connection().execute("SELECT sum(quantity) FROM orders").fetchone()[0]
+    }
+
+for key, value in print_revenue_report().items():
+    print(f"{key}: {value}")
+
+
+
+
+
+
+
+
+
+
+
+
+
+# if __name__ == "__main__":
+#     create_tables()
+#     seed_customers(100)
+#     seed_products(20)
+#     seed_orders(500)
 
 
 
