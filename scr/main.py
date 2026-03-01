@@ -1,5 +1,5 @@
 
-from tabels_and_data import data_bundel
+from metric_exporter import data_bundel
 
 def main():
     # print("""
