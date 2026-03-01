@@ -97,34 +97,6 @@ def make_customer_class():
 
 
 
-with sql.connect("test.db") as con:
-    cur = con.cursor()
 
-cur.execute("""
-CREATE TABLE IF NOT EXISTS shet (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    city TEXT NOT NULL,
-    product_category TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
-    order_date TEXT NOT NULL
-)
-""")
 
 formatted_date = f"{order_date_maker()['year']}-{order_date_maker()['month']:02d}-{order_date_maker()['day']:02d}"
-
-cur.execute("""
-INSERT INTO shet (name, city, product_category, quantity, order_date)
-VALUES (?, ?, ?, ?, ?)
-""", (
-    customer_name_maker(),
-    customer_city_maker(),
-    product_category_maker(),
-    quantity_maker(),
-    formatted_date
-))
-
-#cur.execute("""delete from shet""")
-
-
-con.commit()
