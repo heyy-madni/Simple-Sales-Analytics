@@ -9,7 +9,9 @@ def make_and_fetch():
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
-
+    cursor.execute("DROP TABLE IF EXISTS orders")
+    cursor.execute("DROP TABLE IF EXISTS customers")
+    cursor.execute("DROP TABLE IF EXISTS products")
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS customers(
         customer_id INTEGER PRIMARY KEY,
@@ -43,14 +45,11 @@ def make_and_fetch():
     START_DATE = datetime(2023, 1, 1)
     END_DATE = datetime(2024, 12, 31)
 
-    cities = ["Mumbai","Delhi","Bangalore","Surat","Ahmedabad",
-              "Pune","Hyderabad","Chennai","Kolkata"]
+    cities = ["Mumbai","Delhi","Bangalore","Surat","Ahmedabad","Pune","Hyderabad","Chennai","Kolkata"]
 
-    first_names = ["Aarav","Vivaan","Aditya","Vihaan","Arjun",
-                   "Ananya","Diya","Myra","Sara","Priya"]
+    first_names = ["madni","tofiq","shoaeb","ali","rehan","mahenor","abu","Myra","Sara","aamena","zainab","hussain","sara","mohammed","hassan","faizan","nida","sadia","farhan","aisha"]
 
-    last_names = ["Sharma","Patel","Verma","Gupta",
-                  "Reddy","Nair","Rao","Khan"]
+    last_names = ["khan","bikari","ansari","shekh","sayyid","maleq","shaikh","mohammed","hussain","siddiqui"]
 
     customers = []
     segments = {}
@@ -169,5 +168,3 @@ def make_and_fetch():
     print("done")
     print("orders:", len(orders))
 
-
-make_and_fetch()

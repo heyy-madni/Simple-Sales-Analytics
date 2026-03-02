@@ -6,42 +6,57 @@ def get_metrics(limit: int = 5):
     conn = get_connection()
     cursor = conn.cursor()
 
-    def query(sql, params=()):
-        return cursor.execute(sql, params).fetchone()[0]
+    def scalar(sql, params=()):
+        row = cursor.execute(sql, params).fetchone()
+        return row[0] if row and row[0] is not None else 0
 
-    def queryall(sql, params=()):
+    def rows(sql, params=()):
         return cursor.execute(sql, params).fetchall()
 
-    customers_count = query("SELECT COUNT(*) FROM customers")
-    products_count = query("SELECT COUNT(*) FROM products")
-    orders_count = query("SELECT COUNT(*) FROM orders")
+    # Basic counts
+    customers_count = scalar("SELECT COUNT(*) FROM customers")
+    products_count = scalar("SELECT COUNT(*) FROM products")
+    orders_count = scalar("SELECT COUNT(*) FROM orders")
 
-    total_revenue = query("""
-        SELECT COALESCE(SUM(p.price * o.quantity), 0)
-        FROM products p
-        JOIN orders o ON p.product_id = o.product_id
+    # Revenue + Units
+    total_revenue = scalar("""
+        SELECT SUM(p.price * o.quantity)
+        FROM orders o
+        JOIN products p ON p.product_id = o.product_id
     """)
 
-    total_units = query("SELECT COALESCE(SUM(quantity), 0) FROM orders")
+    total_units = scalar("SELECT SUM(quantity) FROM orders")
 
-    first_5_customers_raw = queryall("SELECT * FROM customers LIMIT 5")
-    top_sale_raw = queryall("""
-        SELECT name, price
+    # Samples
+    first_customers = rows("""
+        SELECT customer_id, name, city
+        FROM customers
+        ORDER BY customer_id
+        LIMIT 5
+    """)
+
+    top_products_by_price = rows("""
+        SELECT name, category, price
         FROM products
         ORDER BY price DESC
         LIMIT ?
     """, (limit,))
 
+    conn.close()
+
     return {
-        "total_revenue": total_revenue,
-        "total_orders": orders_count,
-        "total_units_sold": total_units,
-        "average_order_value": total_revenue / orders_count if orders_count else 0,
-        "average_sale_price": total_revenue / total_units if total_units else 0,
         "customers_count": customers_count,
         "products_count": products_count,
-        "first_5_customers": first_5_customers_raw,
-        "top_sale": top_sale_raw,
+        "total_orders": orders_count,
+
+        "total_revenue": round(total_revenue, 2),
+        "total_units_sold": total_units,
+
+        "average_order_value": round(total_revenue / orders_count, 2) if orders_count else 0,
+        "average_sale_price": round(total_revenue / total_units, 2) if total_units else 0,
+
+        "first_5_customers": first_customers,
+        "top_products_by_price": top_products_by_price,
     }
 
 
