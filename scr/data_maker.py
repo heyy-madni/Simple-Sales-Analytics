@@ -49,7 +49,7 @@ def make_and_fetch():
 
     first_names = ["madni","tofiq","shoaeb","ali","rehan","mahenor","abu","Myra","Sara","aamena","zainab","hussain","sara","mohammed","hassan","faizan","nida","sadia","farhan","aisha"]
 
-    last_names = ["khan","bikari","ansari","shekh","sayyid","maleq","shaikh","mohammed","hussain","siddiqui"]
+    last_names = ["khan","ansari","shekh","sayyid","maleq","shaikh","mohammed","hussain","siddiqui"]
 
     customers = []
     segments = {}
