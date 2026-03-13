@@ -1,7 +1,7 @@
 import random
 import sqlite3 as sql
 from pathlib import Path
-from data_maker import  product_category_maker, order_date_maker, make_customer_class
+
 
 #note i change values to 0
 BASE_DIR = Path(__file__).resolve().parent.parent
