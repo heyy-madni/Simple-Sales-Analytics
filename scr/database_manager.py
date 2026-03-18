@@ -1,4 +1,4 @@
-import random
+
 import sqlite3 as sql
 from pathlib import Path
 

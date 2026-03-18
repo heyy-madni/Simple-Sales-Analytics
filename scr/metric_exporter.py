@@ -1,4 +1,4 @@
-from database_manager import get_connection
+from database_manager import get_connection #type: ignore
 
 
 
