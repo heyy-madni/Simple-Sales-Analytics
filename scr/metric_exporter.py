@@ -1,7 +1,5 @@
 from database_manager import get_connection #type: ignore
 
-
-
 def get_metrics(limit: int = 5):
     conn = get_connection()
     cursor = conn.cursor()
@@ -13,12 +11,10 @@ def get_metrics(limit: int = 5):
     def rows(sql, params=()):
         return cursor.execute(sql, params).fetchall()
 
-    # Basic counts
     customers_count = scalar("SELECT COUNT(*) FROM customers")
     products_count = scalar("SELECT COUNT(*) FROM products")
     orders_count = scalar("SELECT COUNT(*) FROM orders")
 
-    # Revenue + Units
     total_revenue = scalar("""
         SELECT SUM(p.price * o.quantity)
         FROM orders o
@@ -27,12 +23,11 @@ def get_metrics(limit: int = 5):
 
     total_units = scalar("SELECT SUM(quantity) FROM orders")
 
-    # Samples
-    first_customers = rows("""
+    first_customers = rows(f"""
         SELECT customer_id, name, city
         FROM customers
         ORDER BY customer_id
-        LIMIT 5
+        LIMIT {limit}
     """)
 
     top_products_by_price = rows("""
@@ -42,33 +37,59 @@ def get_metrics(limit: int = 5):
         LIMIT ?
     """, (limit,))
 
+    revenue_concentration_ratio = scalar("""
+        SELECT
+            (SELECT SUM(p.price * o.quantity)
+             FROM orders o
+                 JOIN products p ON p.product_id = o.product_id
+                 JOIN customers c ON c.customer_id = o.customer_id
+                 WHERE c.customer_id IN (
+                     SELECT o2.customer_id
+                     FROM orders o2
+                         JOIN products p2 ON p2.product_id = o2.product_id
+                     GROUP BY o2.customer_id
+                     ORDER BY SUM(p2.price * o2.quantity) DESC
+                     LIMIT 5
+                 ))
+            /
+            (SELECT SUM(p.price * o.quantity)
+             FROM orders o
+                 JOIN products p ON p.product_id = o.product_id)
+    """)
+
+
+
     conn.close()
 
     return {
         "customers_count": customers_count,
         "products_count": products_count,
         "total_orders": orders_count,
-
         "total_revenue": round(total_revenue, 2),
         "total_units_sold": total_units,
-
         "average_order_value": round(total_revenue / orders_count, 2) if orders_count else 0,
         "average_sale_price": round(total_revenue / total_units, 2) if total_units else 0,
-
-        "first_5_customers": first_customers,
+        "first_customers": first_customers,
         "top_products_by_price": top_products_by_price,
+        "revenue_concentration_ratio": revenue_concentration_ratio,
+
     }
 
 
 def executive_snapshot():
     metrics = get_metrics()
-    return {"Total Revenue": f"₹{metrics['total_revenue']:,}",
-            "Total Orders": f"{metrics['total_orders']:,}",
-            "Unique Customers": f"{metrics['customers_count']:,}",
-            "Average Order Value": f"₹{metrics['average_order_value']:,}",
-            "Average Units / Order": f"{round(metrics['total_units_sold'] / metrics['total_orders'], 2) if metrics['total_orders'] else 0}",
-            "Revenue per Unit": f"₹{metrics['average_sale_price']:,}"}
+    return {
+        "Total Revenue": f"₹{metrics['total_revenue']:,}",
+        "Total Orders": f"{metrics['total_orders']:,}",
+        "Unique Customers": f"{metrics['customers_count']:,}",
+        "Average Order Value": f"₹{metrics['average_order_value']:,}",
+        "Average Units / Order": f"{round(metrics['total_units_sold'] / metrics['total_orders'], 2) if metrics['total_orders'] else 0}",
+        "Revenue per Unit": f"₹{metrics['average_sale_price']:,}"
+    }
 
+print(f"monthly_growth_rate: {round(get_metrics()['monthly_growth_rate'] * 100, 2)}%")
+print(f"Revenue Concentration Ratio (Top 5 Customers): {round(get_metrics()['revenue_concentration_ratio'] * 100, 2)}%")
+print(f"Repeat Customer Rate: {round(get_metrics()['repeat_customer_rate'], 2)}%")
 
 
 

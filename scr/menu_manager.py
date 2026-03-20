@@ -6,13 +6,12 @@ def executive_snapshot():
     clear_console()
     print("\n===== EXECUTIVE SNAPSHOT =====")
     snapshot = executive_snapshot()
-    print(f"Total Revenue: {snapshot['Total Revenue']}")
-    print(f"Total Orders: {snapshot['Total Orders']}")
-    print(f"Unique Customers: {snapshot['Unique Customers']}")
-    print(f"Average Order Value: {snapshot['Average Order Value']}")
-    print(f"Average Units / Order: {snapshot['Average Units / Order']}")
-    print(f"Revenue per Unit: {snapshot['Revenue per Unit']}")
-
+    print(f"Total Revenue: {snapshot['Total Revenue']}") #type: ignore
+    print(f"Total Orders: {snapshot['Total Orders']}") #type: ignore
+    print(f"Unique Customers: {snapshot['Unique Customers']}") #type: ignore
+    print(f"Average Order Value: {snapshot['Average Order Value']}") #type: ignore
+    print(f"Average Units / Order: {snapshot['Average Units / Order']}") #type: ignore
+    print(f"Revenue per Unit: {snapshot['Revenue per Unit']}") #type: ignore
     click_pause()
 
 def submenu_product_performance():
@@ -114,7 +113,8 @@ def main_menu():
         print("3. Customer Intelligence")
         print("4. Time & Trend Analysis")
         print("5. Risk & Distribution Analysis")
-        print("6. Exit")
+        print("6. insights & Recommendations")
+        print("7. Exit")
         choice = input("Select option: ")
 
         if choice == "1":
@@ -131,8 +131,11 @@ def main_menu():
 
         elif choice == "5":
             submenu_risk_distribution_analysis()
-
+        
         elif choice == "6":
+            pass
+
+        elif choice == "7":
             break
         else:
             print("Invalid option")
