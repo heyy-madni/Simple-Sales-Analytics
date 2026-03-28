@@ -31,6 +31,8 @@ def create_tables():
         )
         """)
 
+
+
         cur.execute("""
         CREATE TABLE IF NOT EXISTS products (
             product_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,6 +53,13 @@ def create_tables():
             FOREIGN KEY (product_id) REFERENCES products(product_id)
         )
         """)
+
+
+
+
+
+
+
 
 
 
