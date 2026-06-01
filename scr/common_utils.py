@@ -1,9 +1,5 @@
 #import 
-
 import os
-
-
-
 
 #wlcome message
 

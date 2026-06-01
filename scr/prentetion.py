@@ -9,7 +9,7 @@ Usage:
 
 from metric_exporter import get_metrics
 from intelligence_engine import generate_insights
-# from intelligent import get_intelligence
+# from intelligence_engine import get_intelligence
 
 
 # ─── ANSI ────────────────────────────────────────────────────────────────────

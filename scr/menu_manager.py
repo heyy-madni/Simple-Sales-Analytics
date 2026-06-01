@@ -20,8 +20,6 @@ def show_executive_snapshot():
 
     click_pause()
 
-
-
 # opt 2 PRODUCT PERFORMANCE
 
 def submenu_product_performance():
@@ -90,7 +88,7 @@ def main_menu():
 
 
         elif choice == "3":
-            #submenu_insights_recommendations()
+            # submenu_insights_recommendations()
             pass
         elif choice == "4":
             print("Exiting...")
