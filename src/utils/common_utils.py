@@ -1,10 +1,6 @@
 #import 
 import os
 
-#wlcome message
-
-
-
 #  CLEAR CONSOLE FUNCTION 
 def clear_console():
     """Clears the console screen."""

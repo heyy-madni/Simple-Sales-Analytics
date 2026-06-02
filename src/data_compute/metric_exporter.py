@@ -1,4 +1,4 @@
-from database_manager import get_connection #type: ignore
+from data_compute.database_manager import get_connection #type:ignore
 
 def get_metrics(limit: int = 5):
     conn = get_connection()
@@ -68,13 +68,11 @@ def get_metrics(limit: int = 5):
         "average_order_value": round(total_revenue / orders_count, 2) if orders_count else 0,
         "average sale price": round(total_revenue / total_units, 2) if total_units else 0,
         "first customers": first_customers,
-        "estimated orders": round(total_revenue / (total_revenue / orders_count), 2) if orders_count else 0,
-        "price to value_gap": round((total_revenue / total_units) - (total_revenue / orders_count), 2) if orders_count and total_units else 0,
+        "price_to_value_gap": round((total_revenue / total_units) - (total_revenue / orders_count), 2) if orders_count and total_units else 0,
         "revenue by category":revenue_by_product,
         "unit sold by category":unit_sold_by_category,
-        "top 5 products by revenue":top_5_products_by_revenue
+        "top_5_products_by_revenue":top_5_products_by_revenue
     }
-
 
 
 
@@ -85,7 +83,7 @@ def executive_snapshot():
         "Total Revenue": f"₹{metrics['total revenue']:,}",
         "Total Orders": f"{metrics['total orders']:,}",
         "Unique Customers": f"{metrics['customers count']:,}",
-        "Average Order Value": f"₹{metrics['average order value']:,}",
+        "Average Order Value": f"₹{metrics['average_order_value']:,}",
         "Average Units / Order": f"{round(metrics['total units sold'] / metrics['total orders'], 2) if metrics['total orders'] else 0}",
         "Revenue per Unit": f"₹{metrics['average sale price']:,}"
     }

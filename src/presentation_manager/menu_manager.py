@@ -1,9 +1,8 @@
-from metric_exporter import executive_snapshot as get_snapshot ,get_metrics
-from common_utils import clear_console, click_pause 
+from data_compute.metric_exporter import executive_snapshot as get_snapshot ,get_metrics# type: ignore #
+from utils.common_utils import clear_console, click_pause  # type: ignore
+from presentation_manager.presentation import show_report #type:ignore
 
 
-
-# opt 1 EXECUTIVE SNAPSHOT
 
 def show_executive_snapshot():
     clear_console()
@@ -20,7 +19,6 @@ def show_executive_snapshot():
 
     click_pause()
 
-# opt 2 PRODUCT PERFORMANCE
 
 def submenu_product_performance():
     while True:
@@ -42,15 +40,15 @@ def submenu_product_performance():
 
         elif choice == "2":
             clear_console()
-            for product, units in get_metrics()["unit_sold_by_category"]:
+            for product, units in get_metrics()["unit sold by category"]:
                  print(f"{product}: ₹{units:,}")
-                 click_pause()
+            click_pause()
 
         elif choice == "3":
             clear_console()
             for product, revenue in get_metrics()["top_5_products_by_revenue"]:
                  print(f"{product}: ₹{revenue:,.2f}")
-                 click_pause()
+            click_pause()
 
         elif choice == "4":
             break
@@ -58,16 +56,6 @@ def submenu_product_performance():
             print("Invalid option")
             click_pause()
 
-
-
-
-
-
-
-
-
-
-# MAIN MENU
 
 def main_menu():
 
@@ -88,7 +76,7 @@ def main_menu():
 
 
         elif choice == "3":
-            # submenu_insights_recommendations()
+            show_report()
             pass
         elif choice == "4":
             print("Exiting...")

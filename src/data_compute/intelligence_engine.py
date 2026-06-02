@@ -1,7 +1,6 @@
-from metric_exporter import get_metrics
+from data_compute.metric_exporter import get_metrics#type:ignore
 
 
-# CORE
 
 def classify(value, thresholds):
     if value < thresholds["low"]:
@@ -12,12 +11,16 @@ def classify(value, thresholds):
 
 
 def impact_score(value, thresholds):
-    target = (
-        thresholds["low"] if value < thresholds["low"]
-        else thresholds["medium"] if value < thresholds["medium"]
-        else thresholds["high"]
-    )
-    return round(abs(value - target) / target * 100, 2) if target else 0
+    if value < thresholds["low"]:
+        target = thresholds["low"]
+    elif value < thresholds["medium"]:
+        target = thresholds["medium"]
+    elif value < thresholds["high"]:
+        target = thresholds["high"]
+    else:
+        return None
+
+    return round(abs(value - target) / target * 100, 2) 
 
 
 def build_metric(name, value, thresholds, prefix=""):
@@ -27,11 +30,10 @@ def build_metric(name, value, thresholds, prefix=""):
         "type": name,
         "value": f"{prefix}{value:,}",
         "level": classify(value, thresholds),
-        "impact": impact_score(value, thresholds)
+        "impact": impact_score(value, thresholds),
+        
     }
 
-
-# METRIC CONFIG
 
 METRICS = [
     ("Total Revenue", "total revenue", {"low": 1e8, "medium": 5e8, "high": 1e9}, "₹"),
@@ -42,8 +44,6 @@ METRICS = [
     ("Average Sale Price", "average sale price", {"low": 5000, "medium": 15000, "high": 30000}, "₹"),
 ]
 
-
-# SPECIAL INSIGHTS
 
 def price_gap_insight(metrics):
     value = metrics.get("price_to_value_gap", 0)
@@ -59,7 +59,7 @@ def price_gap_insight(metrics):
         level = "Neutral"
 
     return {
-        "type": "Price to Value Gap",
+        "type": "price_to_value_gap",
         "value": f"₹{value:,}",
         "level": level,
         "insight": insight
@@ -68,7 +68,7 @@ def price_gap_insight(metrics):
 
 def top_products(metrics):
     total = metrics.get("total revenue", 0)
-    products = metrics.get("top_5_products") or []
+    products = metrics.get("top_5_products_by_revenue") or []
     result = []
 
     for name, rev in products:
@@ -82,7 +82,6 @@ def top_products(metrics):
     return {"type": "Top Products", "data": result}
 
 
-# PIPELINE
 
 def generate_insights(metrics):
     output = []
